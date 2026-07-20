@@ -1,0 +1,20 @@
+{
+  "name": "cahs-monorepo",
+  "private": true,
+  "scripts": {
+    "mobile": "turbo run start --filter=mobile",
+    "build:mobile": "turbo run build --filter=mobile"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packageManager": "npm@10.9.4",
+  "engines": {
+    "node": ">=18"
+  }
+}
