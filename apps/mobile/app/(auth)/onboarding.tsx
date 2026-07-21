@@ -150,12 +150,13 @@ export default function OnboardingScreen() {
     }
 
     // Step 4 — save and navigate
+    if (!reason || !avatar) return;
     const { error } = await updateProfile({
       first_name: firstName.trim(),
       onboarding_reason: reason,
       avatar_emoji: avatar,
-      morning_reminder_time: morningTime,
-      evening_reminder_time: eveningTime,
+      notification_time_morning: morningTime ?? '08:00',
+      notification_time_evening: eveningTime,
       onboarding_complete: true,
     });
 

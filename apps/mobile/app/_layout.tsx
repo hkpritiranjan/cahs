@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, useRouter, useSegments, usePathname } from 'expo-router';
 import { useFonts } from 'expo-font';
 import {
   DMSans_400Regular,
@@ -21,6 +21,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { session, profile, initialized, setSession } = useAuthStore();
   const segments = useSegments();
+  const pathname = usePathname();
   const router = useRouter();
 
   const [fontsLoaded, fontError] = useFonts({
@@ -62,13 +63,13 @@ export default function RootLayout() {
       session &&
       profile &&
       !profile.onboarding_complete &&
-      segments[1] !== 'onboarding'
+      !pathname.includes('onboarding')
     ) {
       router.replace('/(auth)/onboarding');
     } else if (session && profile?.onboarding_complete && inAuthGroup) {
       router.replace('/(tabs)');
     }
-  }, [session, profile, initialized, fontsLoaded]);
+  }, [session, profile, initialized, fontsLoaded, pathname]);
 
   if (!fontsLoaded && !fontError) return null;
   if (!initialized) return null;

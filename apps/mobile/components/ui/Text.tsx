@@ -3,9 +3,8 @@ import { Text as RNText, TextProps as RNTextProps } from 'react-native';
 
 type Variant = 'display' | 'h1' | 'h2' | 'h3' | 'body' | 'bodyLarge' | 'caption' | 'label' | 'micro';
 
-interface TextProps extends RNTextProps {
+interface CahsTextProps extends RNTextProps {
   variant?: Variant;
-  color?: string;
 }
 
 const variantClasses: Record<Variant, string> = {
@@ -20,14 +19,14 @@ const variantClasses: Record<Variant, string> = {
   micro: 'font-dm-sans text-xs text-cahs-stone dark:text-cahs-dark-muted',
 };
 
-export const Text = React.forwardRef<RNText, TextProps>(
+export const Text = React.forwardRef<RNText, CahsTextProps>(
   ({ variant = 'body', className = '', style, ...props }, ref) => {
     return (
       <RNText
         ref={ref}
         className={`${variantClasses[variant]} ${className}`}
         style={style}
-        {...props}
+        {...(props as RNTextProps)}
       />
     );
   }

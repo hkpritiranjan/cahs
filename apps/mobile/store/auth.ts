@@ -9,6 +9,7 @@ interface UserProfile {
   onboarding_reason: string;
   timezone: string;
   notification_time_morning: string;
+  notification_time_evening: string | null;
   subscription_status: 'free' | 'founding' | 'premium';
   created_at: string;
   onboarding_complete: boolean;

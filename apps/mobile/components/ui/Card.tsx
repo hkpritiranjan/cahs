@@ -1,14 +1,23 @@
 import React from 'react';
-import { Pressable, View, ViewProps } from 'react-native';
+import { Pressable, View, StyleProp, ViewStyle } from 'react-native';
 
-interface CardProps extends ViewProps {
+interface CardProps {
   children: React.ReactNode;
   onPress?: () => void;
   className?: string;
   noPad?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function Card({ children, onPress, className = '', noPad = false, style, ...props }: CardProps) {
+const shadow: ViewStyle = {
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.04,
+  shadowRadius: 4,
+  elevation: 2,
+};
+
+export function Card({ children, onPress, className = '', noPad = false, style }: CardProps) {
   const base = `bg-white dark:bg-cahs-dark-surface rounded-2xl border border-cahs-border dark:border-cahs-dark-elevated ${noPad ? '' : 'p-5'} ${className}`;
 
   if (onPress) {
@@ -16,8 +25,7 @@ export function Card({ children, onPress, className = '', noPad = false, style, 
       <Pressable
         onPress={onPress}
         className={`${base} active:opacity-80`}
-        style={[{ shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 2 }, style as any]}
-        {...props}
+        style={[shadow, style]}
       >
         {children}
       </Pressable>
@@ -25,11 +33,7 @@ export function Card({ children, onPress, className = '', noPad = false, style, 
   }
 
   return (
-    <View
-      className={base}
-      style={[{ shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 2 }, style as any]}
-      {...props}
-    >
+    <View className={base} style={[shadow, style]}>
       {children}
     </View>
   );
