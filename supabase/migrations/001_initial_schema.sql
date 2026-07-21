@@ -1,6 +1,6 @@
 -- Enable UUID generation
 create extension if not exists "uuid-ossp";
-create extension if not exists "pg_crypto";
+create extension if not exists "pgcrypto";
 
 -- ── Profiles ──────────────────────────────────────────────────────────────────
 create type onboarding_reason as enum (

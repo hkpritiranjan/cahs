@@ -6,6 +6,7 @@
     "build:mobile": "turbo run build --filter=mobile"
   },
   "devDependencies": {
+    "pg": "^8.22.0",
     "turbo": "^2.0.0",
     "typescript": "^5.3.3"
   },
