@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   Pressable,
   RefreshControl,
+  FlatList,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -38,7 +39,7 @@ function greetingForTime(): string {
 export default function TodayScreen() {
   const router = useRouter();
   const { profile } = useAuthStore();
-  const { todayQuote, todayReflection, bookmarkedIds, fetchToday, toggleBookmark, fetchBookmarks } =
+  const { todayQuote, todayReflection, libraryItems, bookmarkedIds, fetchToday, fetchLibrary, toggleBookmark, fetchBookmarks } =
     useContentStore();
   const { todayCheckin, currentStreak, checkin, fetchToday: fetchMoodToday } = useMoodStore();
 
@@ -53,6 +54,7 @@ export default function TodayScreen() {
     fetchToday();
     fetchBookmarks();
     fetchMoodToday();
+    fetchLibrary();
   }, []);
 
   useEffect(() => {
@@ -69,7 +71,7 @@ export default function TodayScreen() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([fetchToday(), fetchMoodToday()]);
+    await Promise.all([fetchToday(), fetchMoodToday(), fetchLibrary()]);
     setRefreshing(false);
   };
 
@@ -211,6 +213,54 @@ export default function TodayScreen() {
             </Button>
           </Card>
         </View>
+
+        {/* Library */}
+        {libraryItems.length > 0 && (
+          <View className="mt-8">
+            <View className="flex-row items-center justify-between px-5 mb-3">
+              <Text variant="label" className="text-cahs-stone dark:text-cahs-dark-muted">
+                From the library
+              </Text>
+            </View>
+            <FlatList
+              data={libraryItems}
+              keyExtractor={(item) => item.id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
+              renderItem={({ item }) => (
+                <Pressable
+                  onPress={() =>
+                    router.push({ pathname: '/content/[id]', params: { id: item.id } })
+                  }
+                  className="w-56 bg-white dark:bg-cahs-dark-surface rounded-2xl p-4 border border-cahs-border dark:border-cahs-dark-elevated active:opacity-80"
+                  style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 2 }}
+                >
+                  <View className="bg-cahs-amber-light dark:bg-cahs-amber/10 px-2 py-1 rounded-full self-start mb-3">
+                    <Text className="text-cahs-amber text-xs" style={{ fontWeight: '600' }}>
+                      {item.type}
+                    </Text>
+                  </View>
+                  {item.title && (
+                    <Text variant="h3" className="mb-2 leading-snug" numberOfLines={2}>
+                      {item.title}
+                    </Text>
+                  )}
+                  <Text
+                    variant="caption"
+                    className="text-cahs-stone dark:text-cahs-dark-muted leading-relaxed"
+                    numberOfLines={3}
+                  >
+                    {item.body}
+                  </Text>
+                  <Text variant="micro" className="text-cahs-ash mt-3">
+                    {Math.ceil(item.reading_time_seconds / 60)} min read
+                  </Text>
+                </Pressable>
+              )}
+            />
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

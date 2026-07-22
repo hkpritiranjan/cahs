@@ -8,7 +8,7 @@ interface ContentPiece {
   body: string;
   author: string;
   tags: string[];
-  published_at: string;
+  created_at: string;
   reading_time_seconds: number;
 }
 
@@ -65,7 +65,13 @@ export const useContentStore = create<ContentState>((set, get) => ({
 
   fetchLibrary: async (tag) => {
     set({ loading: true });
-    let query = supabase.from('content_pieces').select('*').order('published_at', { ascending: false }).limit(50);
+    let query = supabase
+      .from('content_pieces')
+      .select('*')
+      .eq('is_daily', false)
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+      .limit(50);
     if (tag) query = query.contains('tags', [tag]);
     const { data } = await query;
     set({ libraryItems: data ?? [], loading: false });
