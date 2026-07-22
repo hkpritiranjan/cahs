@@ -99,15 +99,22 @@ export default function TodayScreen() {
             </Text>
           </View>
 
-          {/* Streak badge */}
-          {currentStreak > 1 && (
-            <View className="bg-cahs-amber-light dark:bg-cahs-amber/10 px-3 py-2 rounded-xl items-center">
-              <Text className="text-lg">🔥</Text>
-              <Text variant="micro" className="text-cahs-amber font-dm-sans-semibold">
-                {currentStreak} days
-              </Text>
-            </View>
-          )}
+          <View className="flex-row items-center gap-3">
+            {currentStreak > 1 && (
+              <View className="bg-cahs-amber-light dark:bg-cahs-amber/10 px-3 py-2 rounded-xl items-center">
+                <Text className="text-lg">🔥</Text>
+                <Text variant="micro" className="text-cahs-amber" style={{ fontWeight: '600' }}>
+                  {currentStreak} days
+                </Text>
+              </View>
+            )}
+            <Pressable
+              onPress={() => router.push('/profile')}
+              className="w-11 h-11 items-center justify-center bg-cahs-warm-gray dark:bg-cahs-dark-surface rounded-full border border-cahs-border dark:border-cahs-dark-elevated active:opacity-70"
+            >
+              <Text style={{ fontSize: 22 }}>{profile?.avatar_emoji ?? '🌿'}</Text>
+            </Pressable>
+          </View>
         </View>
 
         {/* Daily Quote */}

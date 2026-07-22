@@ -14,6 +14,7 @@ import { Text } from '../../components/ui/Text';
 import { Button } from '../../components/ui/Button';
 import { useAuthStore } from '../../store/auth';
 import { StatusBar } from 'expo-status-bar';
+import { DISPLAY_TO_DB, scheduleReminders, requestNotificationPermissions } from '../../lib/notifications';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -151,16 +152,26 @@ export default function OnboardingScreen() {
 
     // Step 4 — save and navigate
     if (!reason || !avatar) return;
+
+    // Request notification permission if user chose times
+    if (morningTime || eveningTime) {
+      await requestNotificationPermissions();
+    }
+
+    const morningDb = morningTime ? DISPLAY_TO_DB[morningTime] : '08:00';
+    const eveningDb = eveningTime ? DISPLAY_TO_DB[eveningTime] : null;
+
     const { error } = await updateProfile({
       first_name: firstName.trim(),
       onboarding_reason: reason,
       avatar_emoji: avatar,
-      notification_time_morning: morningTime ?? '08:00',
-      notification_time_evening: eveningTime,
+      notification_time_morning: morningDb,
+      notification_time_evening: eveningDb,
       onboarding_complete: true,
     });
 
     if (!error) {
+      await scheduleReminders(morningDb, eveningDb);
       router.replace('/(tabs)');
     }
   };

@@ -14,6 +14,7 @@ import {
 import * as SplashScreen from 'expo-splash-screen';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/auth';
+import { scheduleReminders } from '../lib/notifications';
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -33,25 +34,30 @@ export default function RootLayout() {
     DMSerifDisplay_400Regular_Italic,
   });
 
-  // Listen to auth state changes
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
     return () => subscription.unsubscribe();
   }, []);
 
-  // Hide splash screen once fonts are ready and auth is initialized
   useEffect(() => {
     if ((fontsLoaded || fontError) && initialized) {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError, initialized]);
 
-  // Auth guard — redirect based on session + onboarding state
+  // Schedule notifications whenever profile changes (on fresh sign-in or profile update)
+  useEffect(() => {
+    if (profile?.onboarding_complete && profile.notification_time_morning) {
+      scheduleReminders(
+        profile.notification_time_morning,
+        profile.notification_time_evening ?? null,
+      );
+    }
+  }, [profile?.id]);
+
   useEffect(() => {
     if (!initialized || (!fontsLoaded && !fontError)) return;
 
@@ -78,6 +84,10 @@ export default function RootLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
       <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+      <Stack.Screen name="profile" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="journal" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="letters" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="content" options={{ animation: 'slide_from_right' }} />
     </Stack>
   );
 }
